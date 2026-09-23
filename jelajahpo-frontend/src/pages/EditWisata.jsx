@@ -1,15 +1,26 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
-export default function AddWisata() {
+export default function EditWisata() {
+    const {id} = useParams();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         nama_wisata: "",
         deskripsi: "",
         harga_tiket: "",
         id_kategori: "",
     });
+    const [loading, setLoading] = useState(true);
 
-    const navigate = useNavigate();
+    useEffect(() => {
+        fetch(`http://localhost:3001/wisata/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+            setFormData(data); // ambil data pertama hasil query
+            setLoading(false);
+        })
+        .catch((err) => console.error(err));
+    }, [id]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,42 +28,39 @@ export default function AddWisata() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try{
-            const res = await fetch("http://localhost:3001/wisata", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
-            });
-            if (res.ok) {
-                alert("Wisata berhasil ditambahkan!");
-                navigate("/wisata");
-            } else {
-                const data = await res.json();
-                alert(data.message || "Gagal menambahkan wisata");
-            }
-            } catch (err) {
-                console.log("Error:", err);
-                alert("Terjadi kesalahan saat menambah wisata");
-            }
-        };
 
-        return (
-            <div className="container mt-4">
-                <h2 className="mb-3">Tambah Wisata</h2>
-                <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
-                    <div className="mb-3">
-                        <label className="form-label">Nama Wisata</label>
-                        <input
-                          type="text"
-                          name="nama_wisata"
-                          value={formData.nama_wisata}
-                          onChange={handleChange}
-                          className="form-control"
-                          placeholder="Masukkan nama wisata"
-                          required
-                        />
-                    </div>
-                    <div className="mb-3">
+        if (!window.confirm("Yakin mau menyimpan perubahan ini?")) {
+            return;
+        }
+
+        await fetch(`http://localhost:3001/wisata/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+        });
+        alert("Wisata berhasil!");
+        navigate("/wisata");
+    };
+
+    if (loading) {
+        return <div className="container mt-4">Loading...</div>;
+    }
+
+    return (
+        <div className="container mt-4">
+            <h2>Edit Wisata</h2>
+            <form onSubmit={handleSubmit} className="mt-3">
+                <div className="mb-3">
+                    <label className="form-label">Nama Wisata</label>
+                    <input
+                      type="text"
+                      name="nama_wisata"
+                      value={formData.nama_wisata}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                </div>
+                <div className="mb-3">
                         <label className="form-label">Deskripsi</label>
                         <textarea
                           name="deskripsi"
@@ -91,9 +99,8 @@ export default function AddWisata() {
                           <option value="4">Kuliner</option>
                         </select>
                     </div>
-
-                    <button type="submit" className="btn btn-success">Simpan</button>
-                </form>
-            </div>
-        );
-    }
+                    <button type="submit" className="btn btn-success me-2">Simpan Perubahan</button>
+            </form>
+        </div>
+    );
+}
