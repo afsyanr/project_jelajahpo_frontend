@@ -32,14 +32,31 @@ export default function EditWisata() {
         if (!window.confirm("Yakin mau menyimpan perubahan ini?")) {
             return;
         }
+        try {
+            const token = localStorage.getItem("token");
 
-        await fetch(`http://localhost:3001/wisata/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
+            const res = await fetch(`http://localhost:3001/wisata/${id}`, {
+                method: "PUT",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` 
+                },
+                body: JSON.stringify(formData),
         });
-        alert("Wisata berhasil!");
-        navigate("/wisata");
+
+        const data = await res.json();
+
+        if (res.ok) {
+            alert(data.message);
+            navigate("/wisata");
+        } else {
+            alert(data.message || "gagal mengupdate wisata");
+        }
+
+        } catch (err) {
+            console.error("Error:", err);
+            alert("Terjadi kesalahan saat mengupdate wisata");
+        }
     };
 
     if (loading) {

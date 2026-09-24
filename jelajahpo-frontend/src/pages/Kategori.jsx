@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 export default function Kategori() {
     const [kategori, setKategori] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     const getKategori = async () => {
         try {
@@ -10,7 +11,7 @@ export default function Kategori() {
             if (!res.ok) {
                 throw new Error("Gagal mengambil data kategori");
             }
-            const data = await res.json();
+            const data = await res.json()
             setKategori(data);
         } catch (err) {
             setError(err.message);
@@ -26,8 +27,11 @@ export default function Kategori() {
     if (loading) {
         return <div className="container mt-4">Loading...</div>
     }
+
     if (error) {
-        return <div className="container mt-4 text-danger">{error}</div>
+        return (
+            <div className="container mt-4 text-danger">{error}</div>
+        );
     }
 
     return (
@@ -41,11 +45,10 @@ export default function Kategori() {
                 </tr>
             </thead>
             <tbody>
-                {kategori.map((item, index) => (
+                {kategori.map((item) => (
                     <tr key={item.id_kategori}>
-                        <td>{index + 1}</td>
                         <td>{item.id_kategori}</td>
-                        <td>{item.nama_kategori}</td>
+                        <td>{item.kategori}</td>
                     </tr>
                 ))}
             </tbody>
