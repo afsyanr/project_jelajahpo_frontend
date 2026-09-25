@@ -60,11 +60,13 @@ export default function Wisata() {
                 <thead className="table-primary">
                     <tr>
                         <th>ID</th>
+                        <th>Foto</th>
                         <th>Nama Wisata</th>
                         <th>Deskripsi</th>
                         <th>Harga Tiket</th>
                         <th>Edit</th>
                         <th>Delete</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -72,6 +74,18 @@ export default function Wisata() {
                         wisata.map((item) => (
                             <tr key={item.id_wisata}>
                                 <td>{item.id_wisata}</td>
+                                <td>
+                                    {item.nama_file ? (
+                                        <img
+                                          src={`http://localhost:3001/uploads/${item.nama_file}`}
+                                          alt={item.judul}
+                                          width="70"
+                                          className="rounded"
+                                        />
+                                    ) : (
+                                        <span className="text-muted">Tidak ada foto</span>
+                                    )}
+                                </td>
                                 <td>{item.nama_wisata}</td>
                                 <td>{item.deskripsi}</td>
                                 <td>Rp {item.harga_tiket}</td>

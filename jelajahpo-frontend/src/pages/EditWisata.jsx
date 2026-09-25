@@ -112,7 +112,7 @@ export default function EditWisata() {
                           <option value="">--Pilih Kategori--</option>
                           <option value="1">Alam</option>
                           <option value="2">Budaya</option>
-                          <option value="3">Religi Wash</option>
+                          <option value="3">Religi</option>
                           <option value="4">Kuliner</option>
                         </select>
                     </div>
